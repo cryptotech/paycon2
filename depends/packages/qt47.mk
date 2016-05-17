@@ -35,7 +35,7 @@ define $(package)_preprocess_cmds
    sed -i.old "s|/usr/X11R6/include|$(host_prefix)/include|" mkspecs/*/*.conf && \
    sed -i.old "s|QMAKE_LFLAGS_SHLIB\t+= -shared|QMAKE_LFLAGS_SHLIB\t+= -shared -Wl,--exclude-libs,ALL|" mkspecs/common/g++.conf && \
    sed -i.old "/SSLv2_client_method/d" src/network/ssl/qsslsocket_openssl.cpp src/network/ssl/qsslsocket_openssl_symbols.cpp && \
-   sed -i.old "/SSLv2_server_method/d" src/network/ssl/qsslsocket_openssl.cpp src/network/ssl/qsslsocket_openssl_symbols.cpp && \
+   sed -i.old "/SSLv2_server_method/d" src/network/ssl/qsslsocket_openssl.cpp src/network/ssl/qsslsocket_openssl_symbols.cpp
   
 endef
 

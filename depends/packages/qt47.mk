@@ -2,7 +2,7 @@ PACKAGE=qt47
 $(package)_version=4.7.4
 $(package)_download_path=http://download.qt-project.org/archive/qt/4.7/
 $(package)_file_name=qt-everywhere-opensource-src-$($(package)_version).tar.gz
-$(package)_sha256_hash=9ad4d46c721b53a429ed5a2eecfd3c239a9ab566562f183f99d3125f1a234250
+$(package)_sha256_hash=97195ebce8a46f9929fb971d9ae58326d011c4d54425389e6e936514f540221e
 $(package)_dependencies=openssl freetype dbus libX11 xproto libXext libICE libSM
 $(package)_patches=stlfix.patch 
 

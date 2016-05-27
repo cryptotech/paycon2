@@ -695,7 +695,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayoutCLAMSpeech">
+    <layout class="QHBoxLayout" name="horizontalLayoutCONSpeech">
      <property name="spacing">
       <number>0</number>
      </property>
@@ -703,7 +703,7 @@
       <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
-      <widget class="QLabel" name="labelCLAMSpeech">
+      <widget class="QLabel" name="labelCONSpeech">
        <property name="font">
         <font>
          <weight>75</weight>
@@ -711,7 +711,7 @@
         </font>
        </property>
        <property name="text">
-        <string>CLAMSpeech: </string>
+        <string>CONSpeech: </string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -719,7 +719,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="clamQuotes">
+      <widget class="QComboBox" name="payconQuotes">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -799,7 +799,7 @@
           <cursorShape>IBeamCursor</cursorShape>
          </property>
          <property name="text">
-          <string>123.456 CLAM</string>
+          <string>123.456 CON</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>

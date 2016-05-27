@@ -62,7 +62,7 @@ public:
         // Build the genesis block. Note that the output of the genesis coinbase cannot
         // be spent as it did not originally exist in the database.
         //
-        const char* pszTimestamp = "14/Apr/2014 No chowder for you, cause clams have feelings too";
+        const char* pszTimestamp = "14/Apr/2014 No chowder for you, cause paycon have feelings too";
         CTransaction txNew;
         txNew.nTime = 1397512438;
         txNew.vin.resize(1);
@@ -81,18 +81,18 @@ public:
         assert(hashGenesisBlock == uint256("0x00000c3ce6b3d823a35224a39798eca9ad889966aeb5a9da7b960ffb9869db35"));
         assert(genesis.hashMerkleRoot == uint256("0xef10b32afd53e4a6ebb8bdb0486c6acbe9b43afe3dfa538e913b89bb1319ff96"));
 
-        // push peer seeders running this network crawler: https://github.com/dooglus/bitcoin-seeder/tree/clam
-        PUSH_SEED("clam.just-dice.com")
+        // push peer seeders running this network crawler: https://github.com/dooglus/bitcoin-seeder/tree/paycon
+        PUSH_SEED("paycon.just-dice.com")
 
         // BIP32 version bytes:
         //    public: 0xa8c26d64 ("cpubk...")
         //   private: 0xa8c17826 ("cprvk...")
         //
-        // http://doc.satoshilabs.com/slips/slip-0044.html gives the CLAM coin type version as 23 (0x80000017)
+        // http://doc.satoshilabs.com/slips/slip-0044.html gives the CON coin type version as 23 (0x80000017)
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(137);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(13);
-        //CLAM Secret key, from old base58.h (release 1.4.2.1)  == 5 + 128
+        //CON Secret key, from old base58.h (release 1.4.2.1)  == 5 + 128
         base58Prefixes[SECRET_KEY]     = list_of(133);
         //BTC, LTC and DOGE secret keys
         base58Prefixes[SECRET_KEY_BTC] = list_of(128);

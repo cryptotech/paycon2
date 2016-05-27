@@ -40,7 +40,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
  
 map<uint256, CBlockIndex*> mapBlockIndex;
-map<string, CClamour*> mapClamour;
+map<string, CConcord*> mapConcord;
 set<pair<COutPoint, unsigned int> > setStakeSeen;
 
 CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
@@ -84,7 +84,7 @@ map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
  
-const string strMessageMagic = "Clam Signed Message:\n";
+const string strMessageMagic = "PayCon Signed Message:\n";
  
 
 extern enum Checkpoints::CPMode CheckpointsMode;
@@ -285,26 +285,26 @@ bool CTransaction::ReadFromDisk(COutPoint prevout)
     return ReadFromDisk(txdb, prevout, txindex);
 }
 
-bool CTransaction::IsCreateClamour(string& strHash, string& strURL) const
+bool CTransaction::IsCreateConcord(string& strHash, string& strURL) const
 {
-    size_t len = strCLAMSpeech.length();
+    size_t len = strCONSpeech.length();
 
-    if (strCLAMSpeech.substr(0, 15) == "create clamour ")
-        LogPrintf("checking speech length %d : %s\n", len, strCLAMSpeech);
+    if (strCONSpeech.substr(0, 15) == "create concord ")
+        LogPrintf("checking speech length %d : %s\n", len, strCONSpeech);
 
-    // "create clamour ..." speech must begin with those 15 characters, and have a 64 character hash after it
-    if (len < 15+64 || strCLAMSpeech.substr(0, 15) != "create clamour ")
+    // "create concord ..." speech must begin with those 15 characters, and have a 64 character hash after it
+    if (len < 15+64 || strCONSpeech.substr(0, 15) != "create concord ")
         return false;
 
     strURL = "";
     strHash = "";
 
-    size_t pos = strCLAMSpeech.find_first_not_of("0123456789abcdef", 15);
+    size_t pos = strCONSpeech.find_first_not_of("0123456789abcdef", 15);
 
     // if the hex goes all the way to the end, there's no URL comment, and the length must be exactly 15+64 or the hex is too long
     if (pos == string::npos) {
         if (len == 15+64) {
-            strHash = strCLAMSpeech.substr(15, 64);
+            strHash = strCONSpeech.substr(15, 64);
             return true;
         }
 
@@ -314,16 +314,16 @@ bool CTransaction::IsCreateClamour(string& strHash, string& strURL) const
     if (pos != 15+64)
         return false;
 
-    strHash = strCLAMSpeech.substr(15, 64);
+    strHash = strCONSpeech.substr(15, 64);
 
     // optional URL is separated from the hash by a single space
-    if (strCLAMSpeech[pos] != ' ')
+    if (strCONSpeech[pos] != ' ')
         return true;
 
     // and ended by whitespace
-    size_t pos2 = strCLAMSpeech.find_first_of(" \t\n\r", ++pos);
+    size_t pos2 = strCONSpeech.find_first_of(" \t\n\r", ++pos);
 
-    strURL = strCLAMSpeech.substr(pos, pos2 == string::npos ? string::npos : pos2 - pos);
+    strURL = strCONSpeech.substr(pos, pos2 == string::npos ? string::npos : pos2 - pos);
     return true;
 }
 
@@ -372,7 +372,7 @@ bool IsStandardTx(const CTransaction& tx, string& reason)
     }
 
     // Disallow large transaction comments
-    if (tx.strCLAMSpeech.length() > MAX_TX_COMMENT_LEN) {
+    if (tx.strCONSpeech.length() > MAX_TX_COMMENT_LEN) {
         reason = "tx-comment-too-large";
         return false;
     }
@@ -1076,9 +1076,9 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindex, int64_t nCoinAge, int64
 
     } else {
 
-        const int64_t randSpan = 2147483647; //Big Number, its unclear but possable correlates to the amount of clams that have ever existed.
-        const int64_t maxReward = 1000 * COIN; //1000 CLAMS
-        const int64_t minReward = 10000000; //.1 CLAM
+        const int64_t randSpan = 2147483647; //Big Number, its unclear but possable correlates to the amount of CON that have ever existed.
+        const int64_t maxReward = 1000 * COIN; //1000 CON
+        const int64_t minReward = 10000000; //.1 CON
         double multFactor = 3000; //Exponential Curve Factor
  
         //Randomize based on blockHash
@@ -1096,10 +1096,10 @@ int64_t GetProofOfStakeReward(const CBlockIndex* pindex, int64_t nCoinAge, int64
  
         //Sanity Checks, If they happen: "We're All Going To Die"
         if(nSubsidy < minReward){
-            //If less than minReward, == 1 CLAM
+            //If less than minReward, == 1 CON
             nSubsidy = minReward;
         } else if(nSubsidy > maxReward) {
-            //If more than maxReward, == 1 CLAM
+            //If more than maxReward, == 1 CON
             nSubsidy = minReward;
         } else {
             nSubsidy = ceil(nSubsidy);
@@ -1468,7 +1468,7 @@ bool CTransaction::FetchInputs(CTxDB& txdb, const map<uint256, CTxIndex>& mapTes
             return DoS(100, error("FetchInputs() : %s prevout.n out of range %d %"PRIszu" %"PRIszu" prev tx %s\n%s", GetHash().ToString(), prevout.n, txPrev.vout.size(), txindex.vSpent.size(), prevout.hash.ToString(), txPrev.ToString()));
         }
 
-        // if nDigs is a non-NULL pointer, check how many initial-distribution CLAMs this transaction moves
+        // if nDigs is a non-NULL pointer, check how many initial-distribution CON this transaction moves
         if (nDigs) {
             CBlock block;
             if (block.ReadFromDisk(txindex.pos.nFile, txindex.pos.nBlockPos, false)) {
@@ -1672,11 +1672,11 @@ bool CBlock::DisconnectBlock(CTxDB& txdb, CBlockIndex* pindex)
         if (!vtx[i].DisconnectInputs(txdb))
             return false;
 
-    BOOST_FOREACH(CClamour& clamour, pindex->vClamour)
+    BOOST_FOREACH(CConcord& concord, pindex->vConcord)
     {
-        string pid = clamour.strHash.substr(0, 8);
-        mapClamour.erase(pid);
-        LogPrintf("erased clamour pid %s from map\n", pid);
+        string pid = concord.strHash.substr(0, 8);
+        mapConcord.erase(pid);
+        LogPrintf("erased concord pid %s from map\n", pid);
     }
 
     // Update block index on disk without changing it in memory.
@@ -1798,7 +1798,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
 
         mapQueuedChanges[hashTx] = CTxIndex(posThisTx, tx.vout.size());
 
-        // check for burned coins (sent to xCLAMBURNXXXXXXXXXXXXXXXXXXX1HaxZH)
+        // check for burned coins (sent to xCONBURNXXXXXXXXXXXXXXXXXXX1HaxZH)
         BOOST_FOREACH(CTxOut& txout, tx.vout)
             if (HexStr(txout.scriptPubKey.begin(), txout.scriptPubKey.end()) == "76a9142c2a57256197df6a1c7d6f14daccf4c3dcf4de4288ac") {
                 LogPrintf("BURN: %s\n", FormatMoney(txout.nValue));
@@ -1866,18 +1866,18 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     if (nStakeReward)
         StakeToWallets(vtx[1].vout[1].scriptPubKey, nStakeReward);
 
-    // scan for CLAMspeech registering CLAMour petitions
+    // scan for CONspeech registering CONcord petitions
     string strHash, strURL;
     
     BOOST_FOREACH(CTransaction& tx, vtx)
-        if (tx.IsCreateClamour(strHash, strURL)) {
-            LogPrintf("found 'create clamour' with '%s' and '%s'\n", strHash, strURL);
+        if (tx.IsCreateConcord(strHash, strURL)) {
+            LogPrintf("found 'create concord' with '%s' and '%s'\n", strHash, strURL);
             string pid = strHash.substr(0, 8);
-            map<string, CClamour*>::iterator mi = mapClamour.find(pid);
-            if (mi == mapClamour.end())
-                pindex->vClamour.push_back(*(mapClamour[pid] = new CClamour(pindex->nHeight, tx.GetHash(), strHash, strURL)));
+            map<string, CConcord*>::iterator mi = mapConcord.find(pid);
+            if (mi == mapConcord.end())
+                pindex->vConcord.push_back(*(mapConcord[pid] = new CConcord(pindex->nHeight, tx.GetHash(), strHash, strURL)));
             else
-                LogPrintf("duplicate clamour with pid %s: %s\n", pid, tx.strCLAMSpeech.substr(0, MAX_TX_COMMENT_LEN));
+                LogPrintf("duplicate concord with pid %s: %s\n", pid, tx.strCONSpeech.substr(0, MAX_TX_COMMENT_LEN));
         }
 
     return true;
@@ -2503,10 +2503,10 @@ std::set<std::string> CBlockIndex::GetSupport() const
                 break;
             }
 
-            string& strSpeech = block.vtx[1].strCLAMSpeech;
+            string& strSpeech = block.vtx[1].strCONSpeech;
             // LogPrintf("stake speech is '%s'\n", strSpeech);
 
-            if (strSpeech.substr(0, 7) != "clamour")
+            if (strSpeech.substr(0, 7) != "concord")
                 break;
 
             int n = 7;
@@ -3086,7 +3086,7 @@ struct CImportingNow
 
 void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 {
-    RenameThread("Clam-loadblk");
+    RenameThread("PayCon-loadblk");
 
     CImportingNow imp;
 
@@ -3245,7 +3245,7 @@ void static ProcessGetData(CNode* pfrom)
                     if (inv.hash == pfrom->hashContinue)
                     {
                         // Default behavior of PoS coins is to send last PoW block here which client
-                        // receives as an orphan. With CLAM we want hyper download speed so further
+                        // receives as an orphan. With CON we want hyper download speed so further
                         // block (index HIGH_BLOCK_INDEX) is sent. If server does not have it yet,
                         // then proceeds with default behavior.
                         vector<CInv> vInv;

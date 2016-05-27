@@ -15,7 +15,7 @@
 #include "signverifymessagedialog.h"
 #include "optionsdialog.h"
 #include "aboutdialog.h"
-#include "clamdb.h"
+#include "condb.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
 #include "editaddressdialog.h"
@@ -91,7 +91,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     updateStyle();
 
     resize(850+95, 550);
-    setWindowTitle(tr("Clam Wallet"));
+    setWindowTitle(tr("PayCon Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
     setWindowIcon(QIcon(":icons/bitcoin"));
@@ -124,7 +124,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     receiveCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab);
     sendCoinsPage = new SendCoinsDialog(this);
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-    clamdbPage = new ClamDB(this);
+    condbPage = new ConDB(this);
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
@@ -133,7 +133,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
     centralStackedWidget->addWidget(rpcConsole);
-    centralStackedWidget->addWidget(clamdbPage);
+    centralStackedWidget->addWidget(condbPage);
     // ! do not add options page, it gets popped on/off on the fly
 
     QWidget *centralWidget = new QWidget();
@@ -184,7 +184,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     progressBar->setAlignment(Qt::AlignCenter);
     progressBar->setVisible(false);
 
-//    if (!fUseClamTheme)
+//    if (!fUsePayConTheme)
 //    {
 //        // Override style sheet for progress bar for styles that have a segmented progress bar,
 //        // as they make the text unreadable (workaround for issue #1071)
@@ -241,7 +241,7 @@ void BitcoinGUI::createActions()
     receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
 
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send"), tabGroup);
-    sendCoinsAction->setToolTip(tr("Send coins to a Clam address"));
+    sendCoinsAction->setToolTip(tr("Send coins to a PayCon address"));
     sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
 
     historyAction = new QAction(QIcon(":/icons/history"), tr("&Transactions"), tabGroup);
@@ -253,16 +253,16 @@ void BitcoinGUI::createActions()
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
 
     optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options"), tabGroup);
-    optionsAction->setToolTip(tr("Modify configuration options for Clam"));
+    optionsAction->setToolTip(tr("Modify configuration options for PayCon"));
     optionsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
 
     rpcConsoleAction = new QAction(QIcon(":/icons/debugwindow"), tr("&Console"), tabGroup);
     rpcConsoleAction->setToolTip(tr("Open debugging and diagnostic console"));
     rpcConsoleAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
 
-    clamdbAction = new QAction(QIcon(":/icons/history"), tr("c&lamDB"), tabGroup);
-    clamdbAction->setToolTip(tr("Store data in the blockchain"));
-    clamdbAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    condbAction = new QAction(QIcon(":/icons/history"), tr("c&lamDB"), tabGroup);
+    condbAction->setToolTip(tr("Store data in the blockchain"));
+    condbAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
 
     //styleButton = new QAction(QIcon(":/icons/tx_inout"), tr("&Update Style"), tabGroup);
 
@@ -273,14 +273,14 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(optionsAction, SIGNAL(triggered()), this, SLOT(gotoOptionsPage()));
     connect(rpcConsoleAction, SIGNAL(triggered()), this, SLOT(gotoConsolePage()));
-    connect(clamdbAction, SIGNAL(triggered()), this, SLOT(gotoClamDbPage()));
+    connect(condbAction, SIGNAL(triggered()), this, SLOT(gotoConDbPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(tr("&About Clam"), this);
-    aboutAction->setToolTip(tr("Show information about Clam"));
+    aboutAction = new QAction(tr("&About PayCon"), this);
+    aboutAction->setToolTip(tr("Show information about PayCon"));
     aboutAction->setMenuRole(QAction::AboutRole);
     aboutQtAction = new QAction(tr("About &Qt"), this);
     aboutQtAction->setToolTip(tr("Show information about Qt"));
@@ -428,7 +428,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
 #endif
             if(trayIcon)
             {
-                trayIcon->setToolTip(tr("Clam client") + QString(" ") + tr("[testnet]"));
+                trayIcon->setToolTip(tr("PayCon client") + QString(" ") + tr("[testnet]"));
                 trayIcon->setIcon(QIcon(":/icons/toolbar_testnet"));
                 toggleHideAction->setIcon(QIcon(":/icons/toolbar_testnet"));
             }
@@ -465,7 +465,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         addressBookPage->setModel(walletModel->getAddressTableModel());
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
-        clamdbPage->setModel(walletModel);
+        condbPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
@@ -502,7 +502,7 @@ void BitcoinGUI::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIconMenu = new QMenu(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setToolTip(tr("Clam client"));
+    trayIcon->setToolTip(tr("PayCon client"));
     trayIcon->setIcon(QIcon(":/icons/toolbar"));
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconActivated(QSystemTrayIcon::ActivationReason)));
@@ -569,7 +569,7 @@ void BitcoinGUI::setNumConnections(int count)
     default: icon = ":/icons/connect_4"; break;
     }
     labelConnectionsIcon->setPixmap(QIcon(icon).pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Clam network", "", count));
+    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to PayCon network", "", count));
 }
 
 void BitcoinGUI::setNumBlocks(int count)
@@ -664,7 +664,7 @@ void BitcoinGUI::setNumBlocks(int count)
 
 void BitcoinGUI::message(const QString &title, const QString &message, bool modal, unsigned int style)
 {
-    QString strTitle = tr("Clam") + " - ";
+    QString strTitle = tr("PayCon") + " - ";
     // Default to information icon
     int nMBoxIcon = QMessageBox::Information;
     int nNotifyIcon = Notificator::Information;
@@ -773,7 +773,7 @@ void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int 
                         .data().toString();
         QString address = ttm->index(start, TransactionTableModel::ToAddress, parent)
                         .data().toString();
-        QString clamspeech = ttm->index(start, TransactionTableModel::CLAMSpeech, parent)
+        QString conspeech = ttm->index(start, TransactionTableModel::CONSpeech, parent)
                         .data().toString();
         QIcon icon = qvariant_cast<QIcon>(ttm->index(start,
                             TransactionTableModel::ToAddress, parent)
@@ -790,7 +790,7 @@ void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int 
                               .arg(date)
                               .arg(BitcoinUnits::formatWithUnit(walletModel->getOptionsModel()->getDisplayUnit(), amount, true))
                               .arg(type)
-                              .arg(address + (clamspeech.length() > 0 ? ("\n" + clamspeech) : "")), icon);
+                              .arg(address + (conspeech.length() > 0 ? ("\n" + conspeech) : "")), icon);
     }
 }
 
@@ -846,8 +846,8 @@ void BitcoinGUI::gotoOptionsPage()
         optionsPage->setModel(clientModel->getOptionsModel());
         centralStackedWidget->addWidget(optionsPage);
 
-        // sync clamspeech editor with the selector in SendCoinsDialog
-        connect( optionsPage, SIGNAL(onClamSpeechUpdated()), this, SLOT(uiReady()) );
+        // sync conspeech editor with the selector in SendCoinsDialog
+        connect( optionsPage, SIGNAL(onConSpeechUpdated()), this, SLOT(uiReady()) );
     }
 
     optionsAction->setChecked(true);
@@ -864,10 +864,10 @@ void BitcoinGUI::gotoConsolePage()
     showNormalIfMinimized();
 }
 
-void BitcoinGUI::gotoClamDbPage()
+void BitcoinGUI::gotoConDbPage()
 {
-    clamdbAction->setChecked(true);
-    centralStackedWidget->setCurrentWidget(clamdbPage);
+    condbAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(condbPage);
     toggleExportButton(false);
     showNormalIfMinimized();
 }
@@ -913,7 +913,7 @@ void BitcoinGUI::dropEvent(QDropEvent *event)
         if (nValidUrisFound)
             gotoSendCoinsPage();
         else
-            notificator->notify(Notificator::Warning, tr("URI handling"), tr("URI can not be parsed! This can be caused by an invalid Clam address or malformed URI parameters."));
+            notificator->notify(Notificator::Warning, tr("URI handling"), tr("URI can not be parsed! This can be caused by an invalid PayCon address or malformed URI parameters."));
     }
 
     event->acceptProposedAction();
@@ -940,7 +940,7 @@ void BitcoinGUI::handleURI(QString strURI)
         gotoSendCoinsPage();
     }
     else
-        notificator->notify(Notificator::Warning, tr("URI handling"), tr("URI can not be parsed! This can be caused by an invalid Clam address or malformed URI parameters."));
+        notificator->notify(Notificator::Warning, tr("URI handling"), tr("URI can not be parsed! This can be caused by an invalid PayCon address or malformed URI parameters."));
 }
 
 void BitcoinGUI::uiReady()
@@ -1164,7 +1164,7 @@ void BitcoinGUI::updateWeight()
 //    if ( fClientsWithNewerVersion > 2 )
 //    {
 //        labelUpdateIcon->setPixmap(QIcon(":/icons/update_notify").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-//        labelUpdateIcon->setToolTip(tr("A new version is available! Visit http://www.clamclient.com for details."));
+//        labelUpdateIcon->setToolTip(tr("A new version is available! Visit http://www.payconclient.com for details."));
 //    }
 //}
 
@@ -1240,7 +1240,7 @@ void BitcoinGUI::showMiscMenu()
 void BitcoinGUI::updateStyle()
 {
     // check if custom styles are enabled
-    if ( !fUseClamTheme )
+    if ( !fUsePayConTheme )
         return;
 
     QString styleSheet;

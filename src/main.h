@@ -249,7 +249,7 @@ public:
     std::vector<CTxIn> vin;
     std::vector<CTxOut> vout;
     unsigned int nLockTime;
-    std::string strCLAMSpeech;
+    std::string strCONSpeech;
     mutable uint256 hash;
 
     // Denial-of-service detection:
@@ -271,7 +271,7 @@ public:
         READWRITE(nLockTime);
         if (this->nVersion > LEGACY_VERSION_1)
         {
-          READWRITE(strCLAMSpeech);
+          READWRITE(strCONSpeech);
         }
     )
 
@@ -284,7 +284,7 @@ public:
         vout.clear();
         nLockTime = 0;
         nDoS = 0;  // Denial-of-service prevention
-        strCLAMSpeech.clear();
+        strCONSpeech.clear();
         hash = 0;
     }
 
@@ -309,7 +309,7 @@ public:
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
 
-    bool IsCreateClamour(std::string& strHash, std::string& strURL) const;
+    bool IsCreateConcord(std::string& strHash, std::string& strURL) const;
 
     /** Amount of bitcoins spent by this transaction.
         @return sum of all outputs (note: does not include fees)
@@ -381,14 +381,14 @@ public:
     {
         std::string str;
         str += IsCoinBase()? "Coinbase" : (IsCoinStake()? "Coinstake" : "CTransaction");
-        str += strprintf("(hash=%s, nTime=%d, ver=%d, vin.size=%"PRIszu", vout.size=%"PRIszu", nLockTime=%d, strCLAMSpeech=%s)\n",
+        str += strprintf("(hash=%s, nTime=%d, ver=%d, vin.size=%"PRIszu", vout.size=%"PRIszu", nLockTime=%d, strCONSpeech=%s)\n",
             GetHash().ToString().substr(0,10).c_str(),
             nTime,
             nVersion,
             vin.size(),
             vout.size(),
             nLockTime,
-            strCLAMSpeech.substr(0,30).c_str());
+            strCONSpeech.substr(0,30).c_str());
         for (unsigned int i = 0; i < vin.size(); i++)
             str += "    " + vin[i].ToString() + "\n";
         for (unsigned int i = 0; i < vout.size(); i++)
@@ -887,7 +887,7 @@ private:
  * to it, but pnext will only point forward to the longest branch, or will
  * be null if the block is not part of the longest chain.
  */
-class CClamour
+class CConcord
 {
 public:
     int nHeight;
@@ -895,11 +895,11 @@ public:
     std::string strHash;
     std::string strURL;
 
-    CClamour()
+    CConcord()
     {
     }
 
-    CClamour(int nHeightIn, uint256 txidIn, std::string& strHashIn, std::string& strURLIn)
+    CConcord(int nHeightIn, uint256 txidIn, std::string& strHashIn, std::string& strURLIn)
     {
         nHeight = nHeightIn;
         txid = txidIn;
@@ -932,7 +932,7 @@ public:
     int64_t nDigsupply;
     int64_t nStakeSupply;
 
-    std::vector<CClamour> vClamour;
+    std::vector<CConcord> vConcord;
 
     unsigned int nFlags;  // ppcoin: block index flags
     enum  
@@ -957,8 +957,8 @@ public:
     unsigned int nBits;
     unsigned int nNonce;
 
-    mutable bool fSupportChecked; // did we check the speech of the staking transaction for 'clamour' support yet?
-    mutable std::set<std::string> setSupport; // CLAMour pid strings supported by this block
+    mutable bool fSupportChecked; // did we check the speech of the staking transaction for 'concord' support yet?
+    mutable std::set<std::string> setSupport; // CONcord pid strings supported by this block
 
     CBlockIndex()
     {
@@ -1186,7 +1186,7 @@ public:
         READWRITE(nMoneySupply);
         READWRITE(nDigsupply);
         READWRITE(nStakeSupply);
-        READWRITE(vClamour);
+        READWRITE(vConcord);
         READWRITE(nFlags);
         READWRITE(nStakeModifier);
         if (IsProofOfStake())

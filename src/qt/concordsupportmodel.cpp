@@ -1,26 +1,26 @@
-#include "clamoursupportmodel.h"
+#include "concordsupportmodel.h"
 
 #include "guiutil.h"
 
-ClamourSupportModel::ClamourSupportModel(QWidget *parent) :
+ConcordSupportModel::ConcordSupportModel(QWidget *parent) :
     QAbstractTableModel(parent)
 {
     columns << tr("Petition ID") << tr("Support");
 }
 
-int ClamourSupportModel::rowCount(const QModelIndex &parent) const
+int ConcordSupportModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return support.size();
 }
 
-int ClamourSupportModel::columnCount(const QModelIndex &parent) const
+int ConcordSupportModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
 }
 
-QVariant ClamourSupportModel::data(const QModelIndex &index, int role) const
+QVariant ConcordSupportModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -39,7 +39,7 @@ QVariant ClamourSupportModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant ClamourSupportModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant ConcordSupportModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Horizontal)
         return QVariant();
@@ -50,21 +50,21 @@ QVariant ClamourSupportModel::headerData(int section, Qt::Orientation orientatio
     return QVariant();
 }
 
-Qt::ItemFlags ClamourSupportModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ConcordSupportModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
     return Qt::ItemFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
-void ClamourSupportModel::clear()
+void ConcordSupportModel::clear()
 {
     beginResetModel();
     support.clear();
     endResetModel();
 }
 
-void ClamourSupportModel::setSupport(std::vector<std::pair<std::string, int> > newSupport)
+void ConcordSupportModel::setSupport(std::vector<std::pair<std::string, int> > newSupport)
 {
     beginResetModel();
     support = newSupport;

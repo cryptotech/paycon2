@@ -1,17 +1,17 @@
-#ifndef CLAMOURPETITIONMODEL_H
-#define CLAMOURPETITIONMODEL_H
+#ifndef CONCORDPETITIONMODEL_H
+#define CONCORDPETITIONMODEL_H
 
 #include <QWidget>
 #include <QAbstractTableModel>
 #include <QStringList>
 
-class CClamour;
+class CConcord;
 
-class ClamourPetitionModel : public QAbstractTableModel
+class ConcordPetitionModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit ClamourPetitionModel(QWidget *parent = 0);
+    explicit ConcordPetitionModel(QWidget *parent = 0);
 
     enum RowIndex {
         Height = 0,
@@ -28,7 +28,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
     void clear();
-    void setPetition(CClamour *newPetition);
+    void setPetition(CConcord *newPetition);
 
 signals:
 
@@ -36,7 +36,7 @@ public slots:
 
 private:
     QStringList rowHeaders;
-    CClamour *petition;
+    CConcord *petition;
 };
 
-#endif // CLAMOURPETITIONMODEL_H
+#endif // CONCORDPETITIONMODEL_H

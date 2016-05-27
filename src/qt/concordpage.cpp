@@ -1,28 +1,28 @@
-#include "clamourpage.h"
-#include "ui_clamourpage.h"
+#include "concordpage.h"
+#include "ui_concordpage.h"
 #include "openssl/sha.h"
-#include "clamspeech.h"
+#include "conspeech.h"
 #include "main.h"
 #include "util.h"
 #include "walletmodel.h"
-#include "clamourpetitionmodel.h"
-#include "clamoursupportmodel.h"
+#include "concordpetitionmodel.h"
+#include "concordsupportmodel.h"
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QMenu>
 
-ClamourPage::ClamourPage(QWidget *parent) :
+ConcordPage::ConcordPage(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClamourPage),
+    ui(new Ui::ConcordPage),
     model(0)
 {
     ui->setupUi(this);
     ui->createPetitionButton->setEnabled(false);
     ui->setVoteCheckBox->setEnabled(false);
 
-    petitionModel = new ClamourPetitionModel(this);
-    ui->searchClamourView->setModel(petitionModel);
+    petitionModel = new ConcordPetitionModel(this);
+    ui->searchConcordView->setModel(petitionModel);
 
     // Context menu for petition support view
     QAction *searchPetitionIDAction = new QAction(tr("Search for petition"), this);
@@ -30,18 +30,18 @@ ClamourPage::ClamourPage(QWidget *parent) :
     petitionViewContextMenu->addAction(searchPetitionIDAction);
     connect(searchPetitionIDAction, SIGNAL(triggered()), this, SLOT(searchHighlightedPetition()));
 
-    supportModel = new ClamourSupportModel(this);
+    supportModel = new ConcordSupportModel(this);
     ui->petitionSupportView->setModel(supportModel);
     connect(ui->petitionSupportView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(searchHighlightedPetition()));
 }
 
-ClamourPage::~ClamourPage()
+ConcordPage::~ConcordPage()
 {
     delete ui;
 }
 
 // Calculate notary ID when text changes.
-void ClamourPage::on_createPetitionEdit_textChanged()
+void ConcordPage::on_createPetitionEdit_textChanged()
 {
     std::string petitionText(ui->createPetitionEdit->toPlainText().toStdString());
     if (petitionText.length() == 0)
@@ -58,7 +58,7 @@ void ClamourPage::on_createPetitionEdit_textChanged()
 }
 
 // Create a tx that creates a petitition
-void ClamourPage::on_createPetitionButton_clicked()
+void ConcordPage::on_createPetitionButton_clicked()
 {
     std::string petitionHash(ui->petitionIDEdit->text().toStdString());
 
@@ -67,50 +67,50 @@ void ClamourPage::on_createPetitionButton_clicked()
         return;
     }
 
-    model->sendClamourTx(petitionHash);
+    model->sendConcordTx(petitionHash);
 
     if (ui->setVoteCheckBox->isChecked())
     {
-        strDefaultStakeSpeech = "clamour " + petitionHash.substr(0, 8);
-        clamourClamSpeech.push_back(strDefaultStakeSpeech);
-        qDebug() << "saving clamour petitions";
-        if ( !SaveClamourClamSpeech() )
-            qDebug() << "Clamour CLAMSpeech petitions FAILED to save!";
+        strDefaultStakeSpeech = "concord " + petitionHash.substr(0, 8);
+        concordConSpeech.push_back(strDefaultStakeSpeech);
+        qDebug() << "saving concord petitions";
+        if ( !SaveConcordConSpeech() )
+            qDebug() << "Concord CONSpeech petitions FAILED to save!";
         loadVotes();
     }
 }
 
-void ClamourPage::on_setVotesButton_clicked()
+void ConcordPage::on_setVotesButton_clicked()
 {
     saveVotes();
 }
 
-void ClamourPage::loadVotes()
+void ConcordPage::loadVotes()
 {
     QStringList list;
-    for (std::vector<std::string>::iterator it = clamourClamSpeech.begin(); it != clamourClamSpeech.end(); ++it)
+    for (std::vector<std::string>::iterator it = concordConSpeech.begin(); it != concordConSpeech.end(); ++it)
     {
         list.append(QString::fromStdString(*it).mid(8));
     }
     ui->votesEdit->setPlainText(list.join("\n"));
 }
 
-void ClamourPage::saveVotes()
+void ConcordPage::saveVotes()
 {
     QStringList list = ui->votesEdit->toPlainText().replace("\n", ",").replace(" ", ",").split(',', QString::SkipEmptyParts);
     std::vector<std::string> newSpeeches;
-    clamourClamSpeech.clear();
+    concordConSpeech.clear();
 
     if (list.length() > 0)
     {
-        newSpeeches.push_back("clamour");
+        newSpeeches.push_back("concord");
         foreach ( const QString &strLine, list )
             if ( !strLine.isEmpty() && strLine.length() >= 8 && IsHex(strLine.toStdString()) )
             {
                 // Create new string if necessary
                 if (newSpeeches.back().length() > MAX_TX_COMMENT_LEN - 9)
                 {
-                    newSpeeches.push_back("clamour");
+                    newSpeeches.push_back("concord");
                 }
                 std::string &newSpeech = newSpeeches.back();
                 newSpeech = newSpeech + " " + strLine.trimmed().left(8).toStdString();
@@ -119,41 +119,41 @@ void ClamourPage::saveVotes()
 
         for (std::vector<std::string>::iterator it = newSpeeches.begin(); it != newSpeeches.end(); ++it)
         {
-            clamourClamSpeech.push_back(*it);
+            concordConSpeech.push_back(*it);
         }
     }
 
     // save new speech
-    qDebug() << "saving clamour petitions";
-    if ( !SaveClamourClamSpeech() )
-        qDebug() << "Clamour CLAMSpeech petitions FAILED to save!";
+    qDebug() << "saving concord petitions";
+    if ( !SaveConcordConSpeech() )
+        qDebug() << "Concord CONSpeech petitions FAILED to save!";
 
     loadVotes();
 }
 
-void ClamourPage::showClamourTxResult(std::string txID, std::string txError)
+void ConcordPage::showConcordTxResult(std::string txID, std::string txError)
 {
     if (txError == "") {
-        std::string txSentMsg = "Clamour petition created successfully: " + txID;
-        QMessageBox::information(this, tr("Create Clamour Petition"),
+        std::string txSentMsg = "Concord petition created successfully: " + txID;
+        QMessageBox::information(this, tr("Create Concord Petition"),
             tr(txSentMsg.c_str()),
             QMessageBox::Ok, QMessageBox::Ok);
         ui->createPetitionButton->setEnabled(false);
         ui->setVoteCheckBox->setEnabled(false);
     } else {
-        QMessageBox::warning(this, tr("Create Clamour Petition"),
+        QMessageBox::warning(this, tr("Create Concord Petition"),
             tr(txError.c_str()),
             QMessageBox::Ok, QMessageBox::Ok);
     }
 }
 
-void ClamourPage::setClamourSearchResults(CClamour *pResult)
+void ConcordPage::setConcordSearchResults(CConcord *pResult)
 {
     if (!pResult)
     {
-        LogPrintf("No clamour results.\n");
-        QMessageBox::warning(this, tr("Clamour Search"),
-            tr("No clamour petition found."),
+        LogPrintf("No concord results.\n");
+        QMessageBox::warning(this, tr("Concord Search"),
+            tr("No concord petition found."),
             QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
@@ -163,7 +163,7 @@ void ClamourPage::setClamourSearchResults(CClamour *pResult)
 
 bool petitionPairSort(std::pair<std::string, int> i, std::pair<std::string, int> j) { return i.second > j.second; }
 
-void ClamourPage::showPetitionSupport(std::map<string, int> mapSupport)
+void ConcordPage::showPetitionSupport(std::map<string, int> mapSupport)
 {
     std::vector<std::pair<std::string, int> > support;
     for (std::map<std::string, int>::iterator it = mapSupport.begin(); it != mapSupport.end(); ++it) {
@@ -174,49 +174,49 @@ void ClamourPage::showPetitionSupport(std::map<string, int> mapSupport)
     supportModel->setSupport(support);
 }
 
-void ClamourPage::setModel(WalletModel *model)
+void ConcordPage::setModel(WalletModel *model)
 {
     this->model = model;
-    connect(this->model, SIGNAL(clamourTxSent(std::string, std::string)), this, SLOT(showClamourTxResult(std::string, std::string)));
-    connect(this->model, SIGNAL(clamourSearchComplete(CClamour*)), this, SLOT(setClamourSearchResults(CClamour*)));
+    connect(this->model, SIGNAL(concordTxSent(std::string, std::string)), this, SLOT(showConcordTxResult(std::string, std::string)));
+    connect(this->model, SIGNAL(concordSearchComplete(CConcord*)), this, SLOT(setConcordSearchResults(CConcord*)));
     connect(this->model, SIGNAL(petitionSupportRetrieved(std::map<std::string,int>)), this, SLOT(showPetitionSupport(std::map<std::string,int>)));
     loadVotes();
 }
 
-void ClamourPage::on_searchClamourButton_clicked()
+void ConcordPage::on_searchConcordButton_clicked()
 {
-    std::string pid(ui->searchClamourEdit->text().toStdString());
+    std::string pid(ui->searchConcordEdit->text().toStdString());
     if (!(IsHex(pid) && pid.length() == 8)) {
-        ui->searchClamourEdit->setValid(false);
+        ui->searchConcordEdit->setValid(false);
         return;
     }
     petitionModel->clear();
-    model->searchClamours(pid);
+    model->searchConcords(pid);
 }
 
 
-void ClamourPage::on_getPetitionSupportButton_clicked()
+void ConcordPage::on_getPetitionSupportButton_clicked()
 {
     int nWindow = ui->petitionWindowSpinbox->value();
     model->getPetitionSupport(nWindow);
 }
 
-void ClamourPage::on_petitionSupportView_customContextMenuRequested(const QPoint &pos)
+void ConcordPage::on_petitionSupportView_customContextMenuRequested(const QPoint &pos)
 {
     QModelIndex index = ui->petitionSupportView->indexAt(pos);
     if (index.isValid())
         petitionViewContextMenu->exec(QCursor::pos());
 }
 
-void ClamourPage::searchHighlightedPetition()
+void ConcordPage::searchHighlightedPetition()
 {
     QModelIndexList indexes = ui->petitionSupportView->selectionModel()->selectedIndexes();
     if (indexes.size() >= 1)
     {
         QModelIndex pidIndex = indexes.at(0);
         QString pid = ui->petitionSupportView->model()->data(pidIndex).toString();
-        ui->searchClamourEdit->setText(pid);
+        ui->searchConcordEdit->setText(pid);
         ui->tabWidget->setCurrentIndex(1);
-        ui->searchClamourButton->animateClick();
+        ui->searchConcordButton->animateClick();
     }
 }

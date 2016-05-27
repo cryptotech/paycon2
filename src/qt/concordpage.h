@@ -1,35 +1,35 @@
-#ifndef CLAMOURPAGE_H
-#define CLAMOURPAGE_H
+#ifndef CONCORDPAGE_H
+#define CONCORDPAGE_H
 
 #include <map>
 
 #include <QWidget>
 
 namespace Ui {
-class ClamourPage;
+class ConcordPage;
 }
 class WalletModel;
-class CClamour;
-class ClamourPetitionModel;
-class ClamourSupportModel;
+class CConcord;
+class ConcordPetitionModel;
+class ConcordSupportModel;
 
 QT_BEGIN_NAMESPACE
 class QMenu;
 QT_END_NAMESPACE
 
-class ClamourPage : public QWidget
+class ConcordPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ClamourPage(QWidget *parent = 0);
-    ~ClamourPage();
+    explicit ConcordPage(QWidget *parent = 0);
+    ~ConcordPage();
 
     void setModel(WalletModel *model);
 
 public slots:
-    void showClamourTxResult(std::string txID, std::string txError);
-    void setClamourSearchResults(CClamour *pResult);
+    void showConcordTxResult(std::string txID, std::string txError);
+    void setConcordSearchResults(CConcord *pResult);
     void showPetitionSupport(std::map<std::string, int> mapSupport);
 
 private slots:
@@ -39,7 +39,7 @@ private slots:
 
     void on_setVotesButton_clicked();
 
-    void on_searchClamourButton_clicked();
+    void on_searchConcordButton_clicked();
 
     void on_getPetitionSupportButton_clicked();
 
@@ -48,14 +48,14 @@ private slots:
     void searchHighlightedPetition();
 
 private:
-    Ui::ClamourPage *ui;
+    Ui::ConcordPage *ui;
     WalletModel *model;
-    ClamourPetitionModel *petitionModel;
-    ClamourSupportModel *supportModel;
+    ConcordPetitionModel *petitionModel;
+    ConcordSupportModel *supportModel;
     QMenu *petitionViewContextMenu;
 
     void loadVotes();
     void saveVotes();
 };
 
-#endif // CLAMOURPAGE_H
+#endif // CONCORDPAGE_H

@@ -1,15 +1,15 @@
-#ifndef CLAMOURSUPPORTMODEL_H
-#define CLAMOURSUPPORTMODEL_H
+#ifndef CONCORDSUPPORTMODEL_H
+#define CONCORDSUPPORTMODEL_H
 
 #include <QWidget>
 #include <QAbstractTableModel>
 #include <QStringList>
 
-class ClamourSupportModel : public QAbstractTableModel
+class ConcordSupportModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit ClamourSupportModel(QWidget *parent = 0);
+    explicit ConcordSupportModel(QWidget *parent = 0);
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
@@ -30,4 +30,4 @@ private:
     std::vector<std::pair<std::string, int> > support;
 };
 
-#endif // CLAMOURSUPPORTMODEL_H
+#endif // CONCORDSUPPORTMODEL_H

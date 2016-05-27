@@ -1,14 +1,14 @@
-#include "clamdb.h"
-#include "ui_clamdb.h"
+#include "condb.h"
+#include "ui_condb.h"
 #include "walletmodel.h"
-#include "clamourpage.h"
+#include "concordpage.h"
 #include "notarypage.h"
 
-ClamDB::ClamDB(QWidget *parent) :
+ConDB::ConDB(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClamDB),
+    ui(new Ui::ConDB),
     model(0),
-    clamourPage(0),
+    concordPage(0),
     notaryPage(0)
 {
     ui->setupUi(this);
@@ -17,22 +17,22 @@ ClamDB::ClamDB(QWidget *parent) :
     ui->stackedWidget->addWidget(this->notaryPage);
     ui->pageList->addItem("Notary");
 
-    clamourPage = new ClamourPage();
-    ui->stackedWidget->addWidget(this->clamourPage);
-    ui->pageList->addItem("CLAMour");
+    concordPage = new ConcordPage();
+    ui->stackedWidget->addWidget(this->concordPage);
+    ui->pageList->addItem("CONcord");
 
     connect(ui->pageList, SIGNAL(currentRowChanged(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
 }
 
-ClamDB::~ClamDB()
+ConDB::~ConDB()
 {
     delete ui;
 }
 
-void ClamDB::setModel(WalletModel *model)
+void ConDB::setModel(WalletModel *model)
 {
     this->model = model;
-    this->clamourPage->setModel(model);
+    this->concordPage->setModel(model);
     this->notaryPage->setModel(model);
     ui->pageList->setCurrentRow(0);
 }

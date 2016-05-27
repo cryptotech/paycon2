@@ -1,26 +1,26 @@
-#include "clamourpetitionmodel.h"
+#include "concordpetitionmodel.h"
 #include "main.h"
 #include "guiutil.h"
 
-ClamourPetitionModel::ClamourPetitionModel(QWidget *parent) :
+ConcordPetitionModel::ConcordPetitionModel(QWidget *parent) :
     QAbstractTableModel(parent), petition(0)
 {
     rowHeaders << tr("Height") << tr("TxID") << tr("Petition Hash") << tr("URL");
 }
 
-int ClamourPetitionModel::rowCount(const QModelIndex &parent) const
+int ConcordPetitionModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 4;
 }
 
-int ClamourPetitionModel::columnCount(const QModelIndex &parent) const
+int ConcordPetitionModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 1;
 }
 
-QVariant ClamourPetitionModel::data(const QModelIndex &index, int role) const
+QVariant ConcordPetitionModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -46,7 +46,7 @@ QVariant ClamourPetitionModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant ClamourPetitionModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant ConcordPetitionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation != Qt::Vertical)
     {
@@ -54,7 +54,7 @@ QVariant ClamourPetitionModel::headerData(int section, Qt::Orientation orientati
         {
         case Qt::DisplayRole:
         case Qt::ToolTipRole:
-            return tr("Clamour Petition");
+            return tr("Concord Petition");
             break;
         default:
             return QVariant();
@@ -84,21 +84,21 @@ QVariant ClamourPetitionModel::headerData(int section, Qt::Orientation orientati
     return QVariant();
 }
 
-Qt::ItemFlags ClamourPetitionModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ConcordPetitionModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
     return Qt::ItemFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 }
 
-void ClamourPetitionModel::clear()
+void ConcordPetitionModel::clear()
 {
     beginResetModel();
     petition = 0;
     endResetModel();
 }
 
-void ClamourPetitionModel::setPetition(CClamour *newPetition)
+void ConcordPetitionModel::setPetition(CConcord *newPetition)
 {
     beginResetModel();
     petition = newPetition;

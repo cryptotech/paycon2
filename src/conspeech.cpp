@@ -1,10 +1,10 @@
-#include <clamspeech.h>
+#include <conspeech.h>
 
 using namespace std;
 
-vector<string> clamSpeechList;
-vector<string> clamSpeech;
-vector<string> clamourClamSpeech;
+vector<string> conSpeechList;
+vector<string> conSpeech;
+vector<string> concordConSpeech;
 vector<string> quoteList;
 CWeightedSpeech weightedStakeSpeech;
 
@@ -23,7 +23,7 @@ void CSLoad() {
         "Bitcoin’s success is owed to creativity and innovation. It has nothing to do with the government’s endorsement -Andreas Antonopolous",
         "Bitcoin is global, decentralized and unstoppable. Let government try, it will be hilarious to watch. -Andreas Antonopolous",
         "When the regulators come to regulate Bitcoin for your own good, your reply should be ‘Fuck Off! -Andreas Antonopolous",
-        "Expression of Religious Freedom: The Great CLAM",
+        "Expression of Religious Freedom: The Great CON",
         "Expression of Religious Freedom: Atheism",
         "Expression of Religious Freedom: Agnosticism",
         "Expression of Religious Freedom: Bábism",
@@ -818,5 +818,5 @@ void CSLoad() {
     unsigned int size = sizeof(texts) / sizeof(texts[0]);
 
     for (unsigned int i = 0; i < size; i++)
-        clamSpeechList.push_back(texts[i]);
+        conSpeechList.push_back(texts[i]);
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The CLAM developers
+// Copyright (c) 2014 The PayCon developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include <vector>
@@ -7,9 +7,9 @@
 
 #include "util.h"
 
-extern std::vector<std::string> clamSpeechList;
-extern std::vector<std::string> clamSpeech;
-extern std::vector<std::string> clamourClamSpeech;
+extern std::vector<std::string> conSpeechList;
+extern std::vector<std::string> conSpeech;
+extern std::vector<std::string> concordConSpeech;
 extern std::vector<std::string> quoteList;
 
 class CWeightedSpeech;

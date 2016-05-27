@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = clam-qt
+TARGET = paycon-qt
 VERSION = 1.4.3.0
 INCLUDEPATH += src src/json src/qt
 QT += network
@@ -237,17 +237,17 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
-    src/clamspeech.h \
+    src/conspeech.h \
     src/chainparams.h \
     src/qt/forms/notarypage.h \
     src/qt/notarypage.h \
-    src/qt/clamdb.h \
-    src/qt/clamourpage.h \
-    src/qt/clamoursupportmodel.h \
-    src/qt/clamourpetitionmodel.h
+    src/qt/condb.h \
+    src/qt/concordpage.h \
+    src/qt/concordsupportmodel.h \
+    src/qt/concordpetitionmodel.h
 
 SOURCES += src/txdb-leveldb.cpp \
-    src/clamspeech.cpp \
+    src/conspeech.cpp \
     src/qt/bitcoin.cpp \
     src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -327,10 +327,10 @@ SOURCES += src/txdb-leveldb.cpp \
     src/pbkdf2.cpp \
     src/qt/forms/notarypage.cpp \
     src/qt/notarypage.cpp \
-    src/qt/clamdb.cpp \
-    src/qt/clamourpage.cpp \
-    src/qt/clamoursupportmodel.cpp \
-    src/qt/clamourpetitionmodel.cpp
+    src/qt/condb.cpp \
+    src/qt/concordpage.cpp \
+    src/qt/concordsupportmodel.cpp \
+    src/qt/concordpetitionmodel.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -349,8 +349,8 @@ FORMS += \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/notarypage.ui \
-    src/qt/forms/clamdb.ui \
-    src/qt/forms/clamourpage.ui
+    src/qt/forms/condb.ui \
+    src/qt/forms/concordpage.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
@@ -431,7 +431,7 @@ macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
 macx:ICON = src/qt/res/icons/bitcoin.icns
-macx:TARGET = "Clam-Qt"
+macx:TARGET = "PayCon-Qt"
 macx:QMAKE_CFLAGS_THREAD += -pthread
 macx:QMAKE_LFLAGS_THREAD += -pthread
 macx:QMAKE_CXXFLAGS_THREAD += -pthread

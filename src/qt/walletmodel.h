@@ -17,7 +17,7 @@ class COutput;
 class COutPoint;
 class uint256;
 class CCoinControl;
-class CClamour;
+class CConcord;
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -87,7 +87,7 @@ public:
     };
 
     // Send coins to a list of recipients
-    SendCoinsReturn sendCoins(const QString &clamspeech, const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL);
+    SendCoinsReturn sendCoins(const QString &conspeech, const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL);
 
     // Wallet encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
@@ -126,10 +126,10 @@ public:
     void sendNotaryTx(std::string hash);
 
     // Search for a petition
-    void searchClamours(std::string pid);
+    void searchConcords(std::string pid);
 
     // Create a petition
-    void sendClamourTx(std::string hash);
+    void sendConcordTx(std::string hash);
 
     // Retrieve support for petitions
     void getPetitionSupport(int nWindow = 10000);
@@ -204,10 +204,10 @@ signals:
     void notaryTxSent(std::string txID, std::string txError);
 
     // Petition search results
-    void clamourSearchComplete(CClamour *pResult);
+    void concordSearchComplete(CConcord *pResult);
 
     // Petition created
-    void clamourTxSent(std::string txID, std::string txError);
+    void concordTxSent(std::string txID, std::string txError);
 
     // Petition support retrieved
     void petitionSupportRetrieved(std::map<std::string, int> mapSupport);

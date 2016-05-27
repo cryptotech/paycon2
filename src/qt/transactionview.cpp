@@ -81,7 +81,7 @@ TransactionView::TransactionView(QWidget *parent) :
     typeWidget->addItem(tr("Notary"), TransactionFilterProxy::TYPE(TransactionRecord::Notary) |
                                 TransactionFilterProxy::TYPE(TransactionRecord::NotarySendToAddress) |
                                 TransactionFilterProxy::TYPE(TransactionRecord::NotarySendToOther));
-    typeWidget->addItem(tr("Petition"), TransactionFilterProxy::TYPE(TransactionRecord::CreateClamour));
+    typeWidget->addItem(tr("Petition"), TransactionFilterProxy::TYPE(TransactionRecord::CreateConcord));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
 
     hlayout->addWidget(typeWidget);
@@ -194,10 +194,10 @@ void TransactionView::setModel(WalletModel *model)
                 TransactionTableModel::Type, 120);
 #if QT_VERSION < 0x050000
     transactionView->horizontalHeader()->setResizeMode(TransactionTableModel::ToAddress, QHeaderView::ResizeToContents);
-    transactionView->horizontalHeader()->setResizeMode(TransactionTableModel::CLAMSpeech, QHeaderView::Stretch);
+    transactionView->horizontalHeader()->setResizeMode(TransactionTableModel::CONSpeech, QHeaderView::Stretch);
 #else
     transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::ToAddress, QHeaderView::ResizeToContents);
-    transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::CLAMSpeech, QHeaderView::Stretch);
+    transactionView->horizontalHeader()->setSectionResizeMode(TransactionTableModel::CONSpeech, QHeaderView::Stretch);
 #endif
         transactionView->horizontalHeader()->resizeSection(
                 TransactionTableModel::Amount, 100);

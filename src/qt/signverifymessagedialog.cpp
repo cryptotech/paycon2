@@ -23,11 +23,11 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget *parent) :
     ui->setupUi(this);
 
 #if QT_VERSION >= 0x040700
-    ui->addressIn_SM->setPlaceholderText(tr("Enter a Clam address (e.g. x8JdtsqUGiV33P6sMUdfSBHnE7JEUyxTaJ)"));
+    ui->addressIn_SM->setPlaceholderText(tr("Enter a PayCon address (e.g. x8JdtsqUGiV33P6sMUdfSBHnE7JEUyxTaJ)"));
     ui->signatureOut_SM->setPlaceholderText(tr("Click \"Sign Message\" to generate signature"));
 
-    ui->addressIn_VM->setPlaceholderText(tr("Enter a Clam address (e.g. x8JdtsqUGiV33P6sMUdfSBHnE7JEUyxTaJ)"));
-    ui->signatureIn_VM->setPlaceholderText(tr("Enter Clam signature"));
+    ui->addressIn_VM->setPlaceholderText(tr("Enter a PayCon address (e.g. x8JdtsqUGiV33P6sMUdfSBHnE7JEUyxTaJ)"));
+    ui->signatureIn_VM->setPlaceholderText(tr("Enter PayCon signature"));
 #endif
 
     GUIUtil::setupAddressWidget(ui->addressIn_SM, this);

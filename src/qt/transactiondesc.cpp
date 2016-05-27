@@ -212,8 +212,8 @@ QString TransactionDesc::toHTML(CWallet *wallet, CWalletTx &wtx, TransactionReco
             strHTML += "<br><b>" + tr("Message") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.mapValue["message"], true) + "<br>";
         if (wtx.mapValue.count("comment") && !wtx.mapValue["comment"].empty())
             strHTML += "<br><b>" + tr("Comment") + ":</b><br>" + GUIUtil::HtmlEscape(wtx.mapValue["comment"], true) + "<br>";
-        if (!wtx.strCLAMSpeech.empty())
-            strHTML += "<br><b>" + tr("Clam Speech") + ":</b><br>" + wtx.strCLAMSpeech.c_str() + "<br>";
+        if (!wtx.strCONSpeech.empty())
+            strHTML += "<br><b>" + tr("PayCon Speech") + ":</b><br>" + wtx.strCONSpeech.c_str() + "<br>";
 
     strHTML += "<b>" + tr("Transaction ID") + ":</b> " + TransactionRecord::formatSubTxId(wtx.GetHash(), rec->idx) + "<br>";
 

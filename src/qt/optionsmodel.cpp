@@ -14,10 +14,10 @@
 #include <QSettings>
 
 // shared UI settings in guiutil.h
-bool fUseClamTheme;
-bool fUseClamSpeech;
-bool fUseClamSpeechRandom;
-int nClamSpeechIndex;
+bool fUsePayConTheme;
+bool fUseConSpeech;
+bool fUseConSpeechRandom;
+int nConSpeechIndex;
 int nStyleSheetVersion;
 
 OptionsModel::OptionsModel(QObject *parent) :
@@ -60,10 +60,10 @@ void OptionsModel::Init()
     nTransactionFee = settings.value("nTransactionFee").toLongLong();
     nReserveBalance = settings.value("nReserveBalance").toLongLong();
     language = settings.value("language", "").toString();
-    fUseClamTheme = settings.value("fUseClamTheme", true).toBool();
-    fUseClamSpeech = settings.value("fUseClamSpeech", true).toBool();
-    fUseClamSpeechRandom = settings.value("fUseClamSpeechRandom", true).toBool();
-    nClamSpeechIndex = settings.value("nClamSpeechIndex", 0).toInt();
+    fUsePayConTheme = settings.value("fUsePayConTheme", true).toBool();
+    fUseConSpeech = settings.value("fUseConSpeech", true).toBool();
+    fUseConSpeechRandom = settings.value("fUseConSpeechRandom", true).toBool();
+    nConSpeechIndex = settings.value("nConSpeechIndex", 0).toInt();
     nStyleSheetVersion = settings.value("nStyleSheetVersion", 0).toInt();
 
     // These are shared with core Bitcoin; we want
@@ -132,14 +132,14 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return QVariant(fCoinControlFeatures);
         case MinimizeCoinAge:
             return settings.value("fMinimizeCoinAge", GetBoolArg("-minimizecoinage", false));
-        case UseClamTheme:
-            return QVariant(fUseClamTheme);
-        case UseClamSpeech:
-            return QVariant(fUseClamSpeech);
-        case UseClamSpeechRandom:
-            return QVariant(fUseClamSpeechRandom);
-        case ClamSpeechIndex:
-            return QVariant(nClamSpeechIndex);
+        case UsePayConTheme:
+            return QVariant(fUsePayConTheme);
+        case UseConSpeech:
+            return QVariant(fUseConSpeech);
+        case UseConSpeechRandom:
+            return QVariant(fUseConSpeechRandom);
+        case ConSpeechIndex:
+            return QVariant(nConSpeechIndex);
         default:
             return QVariant();
         }
@@ -233,21 +233,21 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
             fMinimizeCoinAge = value.toBool();
             settings.setValue("fMinimizeCoinAge", fMinimizeCoinAge);
             break;
-        case UseClamTheme:
-            fUseClamTheme = value.toBool();
-            settings.setValue("fUseClamTheme", fUseClamTheme);
+        case UsePayConTheme:
+            fUsePayConTheme = value.toBool();
+            settings.setValue("fUsePayConTheme", fUsePayConTheme);
             break;
-        case UseClamSpeech:
-            fUseClamSpeech = value.toBool();
-            settings.setValue("fUseClamSpeech", fUseClamSpeech);
+        case UseConSpeech:
+            fUseConSpeech = value.toBool();
+            settings.setValue("fUseConSpeech", fUseConSpeech);
             break;
-        case UseClamSpeechRandom:
-            fUseClamSpeechRandom = value.toBool();
-            settings.setValue("fUseClamSpeechRandom", fUseClamSpeechRandom);
+        case UseConSpeechRandom:
+            fUseConSpeechRandom = value.toBool();
+            settings.setValue("fUseConSpeechRandom", fUseConSpeechRandom);
             break;
-        case ClamSpeechIndex:
-            nClamSpeechIndex = value.toInt();
-            settings.setValue("nClamSpeechIndex", nClamSpeechIndex);
+        case ConSpeechIndex:
+            nConSpeechIndex = value.toInt();
+            settings.setValue("nConSpeechIndex", nConSpeechIndex);
             break;
         default:
             break;

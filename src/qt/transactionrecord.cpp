@@ -32,10 +32,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
     uint256 hash = wtx.GetHash(), hashPrev = 0;
     std::map<std::string, std::string> mapValue = wtx.mapValue;
 
-    std::string clamspeech = "";
-    if (!wtx.strCLAMSpeech.empty())
+    std::string conspeech = "";
+    if (!wtx.strCONSpeech.empty())
     {
-        clamspeech = wtx.strCLAMSpeech;
+        conspeech = wtx.strCONSpeech;
     }
 
 
@@ -50,7 +50,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             {
                 TransactionRecord sub(hash, nTime);
                 CTxDestination address;
-                sub.clamspeech = clamspeech;
+                sub.conspeech = conspeech;
                 sub.idx = parts.size(); // sequence number
                 sub.credit = txout.nValue;
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address))
@@ -102,11 +102,11 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             int64_t nChange = wtx.GetChange();
 
             TransactionRecord sub(hash, nTime, TransactionRecord::SendToSelf, "",
-                             -(nDebit - nChange), nCredit - nChange, clamspeech);
-            if (clamspeech.length() == 71 && clamspeech.compare(0, 7, "notary ") == 0) {
+                             -(nDebit - nChange), nCredit - nChange, conspeech);
+            if (conspeech.length() == 71 && conspeech.compare(0, 7, "notary ") == 0) {
                 sub.type = TransactionRecord::Notary;
-            } else if (clamspeech.length() >= 79 && clamspeech.compare(0, 15, "create clamour ") == 0) {
-                sub.type = TransactionRecord::CreateClamour;
+            } else if (conspeech.length() >= 79 && conspeech.compare(0, 15, "create concord ") == 0) {
+                sub.type = TransactionRecord::CreateConcord;
             }
             parts.append(sub);
         }
@@ -122,7 +122,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 const CTxOut& txout = wtx.vout[nOut];
                 TransactionRecord sub(hash, nTime);
                 sub.idx = parts.size();
-                sub.clamspeech = clamspeech;
+                sub.conspeech = conspeech;
 
                 if(wallet->IsMine(txout))
                 {
@@ -137,7 +137,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                     // Sent to Bitcoin Address
                     sub.type = TransactionRecord::SendToAddress;
                     sub.address = CBitcoinAddress(address).ToString();
-                    if (clamspeech.length() == 71 && clamspeech.compare(0, 7, "notary ") == 0)
+                    if (conspeech.length() == 71 && conspeech.compare(0, 7, "notary ") == 0)
                         sub.type = TransactionRecord::NotarySendToAddress;
                 }
                 else
@@ -145,7 +145,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                     // Sent to IP, or other non-address transaction like OP_EVAL
                     sub.type = TransactionRecord::SendToOther;
                     sub.address = mapValue["to"];
-                    if (clamspeech.length() == 71 && clamspeech.compare(0, 7, "notary ") == 0)
+                    if (conspeech.length() == 71 && conspeech.compare(0, 7, "notary ") == 0)
                         sub.type = TransactionRecord::NotarySendToOther;
                 }
 
@@ -166,8 +166,8 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             //
             // Mixed debit transaction, can't break down payees
             //
-            TransactionRecord sub(hash, nTime, TransactionRecord::Other, "", nNet, 0, clamspeech);
-            if (clamspeech.length() == 71 && clamspeech.compare(0, 7, "notary ") == 0)
+            TransactionRecord sub(hash, nTime, TransactionRecord::Other, "", nNet, 0, conspeech);
+            if (conspeech.length() == 71 && conspeech.compare(0, 7, "notary ") == 0)
                 sub.type = TransactionRecord::Notary;
             parts.append(sub);
         }

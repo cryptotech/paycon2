@@ -31,10 +31,10 @@ public:
         Language,          // QString
         CoinControlFeatures, // bool
         MinimizeCoinAge,   // bool
-        UseClamTheme,      // bool
-        UseClamSpeech,     // bool
-        UseClamSpeechRandom, // bool
-        ClamSpeechIndex,   // int
+        UsePayConTheme,      // bool
+        UseConSpeech,     // bool
+        UseConSpeechRandom, // bool
+        ConSpeechIndex,   // int
         OptionIDRowCount,
     };
 

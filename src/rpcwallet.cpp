@@ -72,7 +72,7 @@ void WalletTxToJSON(const CWalletTx& wtx, UniValue& entry)
     entry.push_back(Pair("txid", wtx.GetHash().GetHex()));
     entry.push_back(Pair("time", (int64_t)wtx.GetTxTime()));
     entry.push_back(Pair("timereceived", (int64_t)wtx.nTimeReceived));
-    entry.push_back(Pair("tx-comment", wtx.strCLAMSpeech));
+    entry.push_back(Pair("tx-comment", wtx.strCONSpeech));
     BOOST_FOREACH(const PAIRTYPE(string,string)& item, wtx.mapValue)
         entry.push_back(Pair(item.first, item.second));
 }
@@ -118,7 +118,7 @@ UniValue getnewaddress(const UniValue& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "getnewaddress [account]\n"
-            "Returns a new Clam address for receiving payments.  "
+            "Returns a new PayCon address for receiving payments.  "
             "If [account] is specified (recommended), it is added to the address book "
             "so payments received with the address will be credited to [account].");
 
@@ -184,7 +184,7 @@ UniValue getaccountaddress(const UniValue& params, bool fHelp)
     if (fHelp || params.size() != 1)
         throw runtime_error(
             "getaccountaddress <account>\n"
-            "Returns the current Clam address for receiving payments to this account.");
+            "Returns the current PayCon address for receiving payments to this account.");
 
     // Parse the account first so we don't generate a key if there's an error
     string strAccount = AccountFromValue(params[0]);
@@ -202,12 +202,12 @@ UniValue setaccount(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "setaccount <clamaddress> <account>\n"
+            "setaccount <payconaddress> <account>\n"
             "Sets the account associated with the given address.");
 
     CBitcoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Clam address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid PayCon address");
 
 
     string strAccount;
@@ -232,12 +232,12 @@ UniValue getaccount(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "getaccount <clamaddress>\n"
+            "getaccount <payconaddress>\n"
             "Returns the account associated with the given address.");
 
     CBitcoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Clam address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid PayCon address");
 
     string strAccount;
     map<CTxDestination, string>::iterator mi = pwalletMain->mapAddressBook.find(address.Get());
@@ -272,13 +272,13 @@ UniValue sendtoaddress(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 5)
         throw runtime_error(
-            "sendtoaddress <clamaddress> <amount> [comment] [comment-to] [tx-comment]\n"
-            "<amount> is either an amount to send or {\"count\":c,\"amount\":a} which sends <c> separate outputs each of size <a> CLAMs"
+            "sendtoaddress <payconaddress> <amount> [comment] [comment-to] [tx-comment]\n"
+            "<amount> is either an amount to send or {\"count\":c,\"amount\":a} which sends <c> separate outputs each of size <a> CON"
             + HelpRequiringPassphrase());
 
     CBitcoinAddress address(params[0].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Clam address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid PayCon address");
 
     // Amount
     int64_t nAmount, nCount;
@@ -307,18 +307,18 @@ UniValue sendtoaddress(const UniValue& params, bool fHelp)
         wtx.mapValue["to"]      = params[3].get_str();
 
      // Transaction comment
-    std::string clamspeech;
+    std::string conspeech;
     if (params.size() > 4 && params[4].isNull() && !params[4].get_str().empty())
     {
-        clamspeech = params[4].get_str();
-        if (clamspeech.length() > MAX_TX_COMMENT_LEN)
-            clamspeech.resize(MAX_TX_COMMENT_LEN);
+        conspeech = params[4].get_str();
+        if (conspeech.length() > MAX_TX_COMMENT_LEN)
+            conspeech.resize(MAX_TX_COMMENT_LEN);
      }
 
     if (pwalletMain->IsLocked())
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
 
-    string strError = pwalletMain->SendMoneyToDestination(address.Get(), nAmount, nCount, wtx, clamspeech);
+    string strError = pwalletMain->SendMoneyToDestination(address.Get(), nAmount, nCount, wtx, conspeech);
     if (strError != "")
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
 
@@ -360,7 +360,7 @@ UniValue signmessage(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() != 2)
         throw runtime_error(
-            "signmessage <clamaddress> <message>\n"
+            "signmessage <payconaddress> <message>\n"
             "Sign a message with the private key of an address");
 
     EnsureWalletIsUnlocked();
@@ -395,8 +395,8 @@ UniValue getstakedbyaddress(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getstakedbyaddress <clamaddress|*> [minconf=1]\n"
-            "Returns the total reward (including fees) earned from staking by <clamaddress> with at least [minconf] confirmations.");
+            "getstakedbyaddress <payconaddress|*> [minconf=1]\n"
+            "Returns the total reward (including fees) earned from staking by <payconaddress> with at least [minconf] confirmations.");
 
     // Bitcoin address
     string strAddressParam = params[0].get_str();
@@ -410,13 +410,13 @@ UniValue getstakedbyaddress(const UniValue& params, bool fHelp)
         address = CBitcoinAddress(strAddressParam);
 
         if (!address.IsValid())
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Clam address");
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid PayCon address");
 
         if (!address.GetKeyID(keyID))
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Can't find keyID for Clam address");
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Can't find keyID for PayCon address");
 
         if (!pwalletMain->GetPubKey(keyID, key))
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Can't find pubkey for Clam address");
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Can't find pubkey for PayCon address");
 
         scriptPubKey << key << OP_CHECKSIG;
 
@@ -476,14 +476,14 @@ UniValue getreceivedbyaddress(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getreceivedbyaddress <clamaddress> [minconf=1]\n"
-            "Returns the total amount received by <clamaddress> in transactions with at least [minconf] confirmations.");
+            "getreceivedbyaddress <payconaddress> [minconf=1]\n"
+            "Returns the total amount received by <payconaddress> in transactions with at least [minconf] confirmations.");
 
     // Bitcoin address
     CBitcoinAddress address = CBitcoinAddress(params[0].get_str());
     CScript scriptPubKey;
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Clam address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid PayCon address");
     scriptPubKey.SetDestination(address.Get());
     if (!IsMine(*pwalletMain,scriptPubKey))
         return (double)0.0;
@@ -706,14 +706,14 @@ UniValue sendfrom(const UniValue& params, bool fHelp)
 {
      if (fHelp || params.size() < 3 || params.size() > 7)
         throw runtime_error(
-            "sendfrom <fromaccount> <toclamaddress> <amount> [minconf=1] [comment] [comment-to] [tx-comment]\n"
-            "<amount> is either an amount to send or {\"count\":c,\"amount\":a} which sends <c> separate outputs each of size <a> CLAMs"
+            "sendfrom <fromaccount> <topayconaddress> <amount> [minconf=1] [comment] [comment-to] [tx-comment]\n"
+            "<amount> is either an amount to send or {\"count\":c,\"amount\":a} which sends <c> separate outputs each of size <a> CON"
             + HelpRequiringPassphrase());
 
     string strAccount = AccountFromValue(params[0]);
     CBitcoinAddress address(params[1].get_str());
     if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Clam address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid PayCon address");
 
     int64_t nAmount, nCount;
 
@@ -744,12 +744,12 @@ UniValue sendfrom(const UniValue& params, bool fHelp)
     if (params.size() > 5 && params[5].isNull() && !params[5].get_str().empty())
         wtx.mapValue["to"]      = params[5].get_str();
 
-    std::string clamspeech;
+    std::string conspeech;
     if (params.size() > 6 && params[6].isNull() && !params[6].get_str().empty())
     {
-        clamspeech = params[6].get_str();
-        if (clamspeech.length() > MAX_TX_COMMENT_LEN)
-            clamspeech.resize(MAX_TX_COMMENT_LEN);
+        conspeech = params[6].get_str();
+        if (conspeech.length() > MAX_TX_COMMENT_LEN)
+            conspeech.resize(MAX_TX_COMMENT_LEN);
     }
 
     EnsureWalletIsUnlocked();
@@ -760,7 +760,7 @@ UniValue sendfrom(const UniValue& params, bool fHelp)
         throw JSONRPCError(RPC_WALLET_INSUFFICIENT_FUNDS, "Account has insufficient funds");
 
     // Send
-    string strError = pwalletMain->SendMoneyToDestination(address.Get(), nAmount, nCount, wtx, clamspeech);
+    string strError = pwalletMain->SendMoneyToDestination(address.Get(), nAmount, nCount, wtx, conspeech);
     if (strError != "")
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
 
@@ -783,13 +783,13 @@ UniValue sendmany(const UniValue& params, bool fHelp)
         nMinDepth = params[2].get_int();
 
     CWalletTx wtx;
-    std::string strCLAMSpeech;
+    std::string strCONSpeech;
 
     wtx.strFromAccount = strAccount;
     if (params.size() > 3 && params[3].isNull() && !params[3].get_str().empty())
         wtx.mapValue["comment"] = params[3].get_str();
     if (params.size() > 4 && params[4].isNull() && !params[4].get_str().empty())
-        strCLAMSpeech = params[4].get_str();
+        strCONSpeech = params[4].get_str();
 
     set<CBitcoinAddress> setAddress;
     vector<pair<CScript, int64_t> > vecSend;
@@ -800,7 +800,7 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     {
         CBitcoinAddress address(name_);
         if (!address.IsValid())
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid Clam address: ")+name_);
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid PayCon address: ")+name_);
 
         setAddress.insert(address);
 
@@ -823,7 +823,7 @@ UniValue sendmany(const UniValue& params, bool fHelp)
     // Send
     CReserveKey keyChange(pwalletMain);
     int64_t nFeeRequired = 0;
-    bool fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, strCLAMSpeech);
+    bool fCreated = pwalletMain->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, strCONSpeech);
     if (!fCreated)
     {
         if (totalAmount + nFeeRequired > pwalletMain->GetBalance())
@@ -842,7 +842,7 @@ UniValue addmultisigaddress(const UniValue& params, bool fHelp)
     {
         string msg = "addmultisigaddress <nrequired> <'[\"key\",\"key\"]'> [account]\n"
             "Add a nrequired-to-sign multisignature address to the wallet\"\n"
-            "each key is a Clam address or hex-encoded public key\n"
+            "each key is a PayCon address or hex-encoded public key\n"
             "If [account] is specified, assign address to [account].";
         throw runtime_error(msg);
     }
@@ -1453,7 +1453,7 @@ UniValue getnotarytransaction(const UniValue& params, bool fHelp)
 
     	BOOST_FOREACH (const CTransaction& tx, block.vtx)
     	{	
-		if (tx.strCLAMSpeech == hash.GetHex()) {
+		if (tx.strCONSpeech == hash.GetHex()) {
     			UniValue entry(UniValue::VOBJ);
 			notaryFound = true;
 			
@@ -1509,29 +1509,29 @@ UniValue sendnotarytransaction(const UniValue& params, bool fHelp)
     if (pwalletMain->IsLocked())
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
 
-    string strError = pwalletMain->SendCLAMSpeech(wtx, nHash, prefix);
+    string strError = pwalletMain->SendCONSpeech(wtx, nHash, prefix);
     if (strError != "")
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
 
     return wtx.GetHash().GetHex();
 }
 
-UniValue createclamour(const UniValue& params, bool fHelp)
+UniValue createconcord(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() < 1)
         throw runtime_error(
-            "createclamour <clamourProposal> [url]\n"
-            "<clamourProposal> is a full 64 character sha256 hash of a CLAMour proposal.\n"
+            "createconcord <concordProposal> [url]\n"
+            "<concordProposal> is a full 64 character sha256 hash of a CONcord proposal.\n"
             "Any string of text that is not 64 characters in length\n"
-            "will be treated as the body of a CLAMour proposal and automatically\n"
+            "will be treated as the body of a CONcord proposal and automatically\n"
             "hashed into sha256\n\n"
-            "[url] is an optional field to include a link to your CLAMour proposal"
+            "[url] is an optional field to include a link to your CONcord proposal"
             + HelpRequiringPassphrase());
 
     CWalletTx wtx;
-    std::string prefix = "clamour";
+    std::string prefix = "concord";
     std::string strHash = params[0].get_str();
-    std::string clamSpeech = "";
+    std::string conSpeech = "";
     std::string url = "";
 
     if (params.size() > 1) 
@@ -1552,11 +1552,11 @@ UniValue createclamour(const UniValue& params, bool fHelp)
             strHash = ss.str();
     }
 
-    clamSpeech = strHash + url;
+    conSpeech = strHash + url;
     if (pwalletMain->IsLocked())
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
 
-    string strError = pwalletMain->SendCLAMSpeech(wtx, clamSpeech, prefix);
+    string strError = pwalletMain->SendCONSpeech(wtx, conSpeech, prefix);
     if (strError != "")
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
 
@@ -1809,7 +1809,7 @@ UniValue encryptwallet(const UniValue& params, bool fHelp)
     // slack space in .dat files; that is bad if the old data is
     // unencrypted private keys. So:
     StartShutdown();
-    return "wallet encrypted; Clam server stopping, restart to run with encrypted wallet.  The keypool has been flushed, you need to make a new backup.";
+    return "wallet encrypted; PayCon server stopping, restart to run with encrypted wallet.  The keypool has been flushed, you need to make a new backup.";
 }
 
 

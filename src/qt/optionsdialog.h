@@ -21,12 +21,12 @@ public:
 
     void setModel(OptionsModel *model);
     void setMapper();
-    void loadClamQuotes();
-    void saveClamQuotes();
+    void loadPayConQuotes();
+    void savePayConQuotes();
 
 signals:
     void proxyIpValid(QValidatedLineEdit *object, bool fValid);
-    void onClamSpeechUpdated();
+    void onConSpeechUpdated();
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);
